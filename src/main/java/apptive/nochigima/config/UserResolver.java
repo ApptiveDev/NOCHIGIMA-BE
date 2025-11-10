@@ -22,8 +22,6 @@ import apptive.nochigima.util.JwtUtil;
 @RequiredArgsConstructor
 public class UserResolver implements HandlerMethodArgumentResolver {
 
-    private static final String AUTHORIZATION_PREFIX = "Bearer ";
-
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
@@ -39,13 +37,12 @@ public class UserResolver implements HandlerMethodArgumentResolver {
             @NonNull NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory)
             throws Exception {
-        String authHeader = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (StringUtils.isBlank(authHeader) || !authHeader.startsWith(AUTHORIZATION_PREFIX)) {
+        String jwtWithPrefix = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.isBlank(jwtWithPrefix)) {
             throw new UnauthorizedException("JWT 인증 헤더가 필요합니다.");
         }
 
-        String token = authHeader.substring(AUTHORIZATION_PREFIX.length());
+        String token = jwtUtil.removePrefix(jwtWithPrefix);
         jwtUtil.validateToken(token);
 
         Long userId = jwtUtil.getUserId(token);

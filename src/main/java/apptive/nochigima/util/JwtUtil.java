@@ -19,6 +19,7 @@ import apptive.nochigima.exception.UnauthorizedException;
 @Component
 public class JwtUtil {
 
+    private static final String AUTHORIZATION_PREFIX = "Bearer ";
     private static final long ACCESS_TOKEN_EXPIRATION = 1000L * 60 * 60 * 24; // 1일
     private static final long REFRESH_TOKEN_EXPIRATION = 1000L * 60 * 60 * 24 * 30; // 30일
 
@@ -64,5 +65,9 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .get("userId", Long.class);
+    }
+
+    public String removePrefix(String jwtWithPrefix) {
+        return jwtWithPrefix.substring(AUTHORIZATION_PREFIX.length());
     }
 }
