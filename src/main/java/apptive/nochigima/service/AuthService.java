@@ -85,16 +85,8 @@ public class AuthService {
         String refreshToken = jwtUtil.removePrefix(refreshTokenWithPrefix);
         jwtUtil.validateToken(refreshToken);
 
-        Long userId = jwtUtil.getUserId(refreshToken);
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("토큰 정보와 일치하는 회원이 존재하지 않습니다."));
-
-        String dbRefreshToken = user.getRefreshToken();
-
-        if (dbRefreshToken == null || !dbRefreshToken.equals(refreshToken)) {
-            throw new UnauthorizedException("유효하지 않은 JWT 토큰입니다.");
-        }
+        User user = findByIdOrThrow(jwtUtil.getUserId(refreshToken));
+        validateRefreshTokenWithUser(refreshToken, user);
 
         return issueTokens(user);
     }
@@ -104,5 +96,19 @@ public class AuthService {
         user.setRefreshToken(refreshToken);
 
         return new AuthResponse(jwtUtil.createAccessToken(user.getId()), refreshToken);
+    }
+
+    private User findByIdOrThrow(Long userId) {
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("토큰 정보와 일치하는 회원이 존재하지 않습니다."));
+    }
+
+    private void validateRefreshTokenWithUser(String refreshToken, User user) {
+        String dbRefreshToken = user.getRefreshToken();
+
+        if (dbRefreshToken == null || !dbRefreshToken.equals(refreshToken)) {
+            throw new UnauthorizedException("유효하지 않은 JWT 토큰입니다.");
+        }
     }
 }
