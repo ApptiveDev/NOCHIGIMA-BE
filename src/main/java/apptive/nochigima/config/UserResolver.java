@@ -14,6 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 
+import apptive.nochigima.exception.UnauthorizedException;
 import apptive.nochigima.repository.UserRepository;
 import apptive.nochigima.util.JwtUtil;
 
@@ -41,12 +42,13 @@ public class UserResolver implements HandlerMethodArgumentResolver {
         String authHeader = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (StringUtils.isBlank(authHeader) || !authHeader.startsWith(AUTHORIZATION_PREFIX)) {
-            throw new IllegalArgumentException("JWT 인증 헤더가 필요합니다.");
+            throw new UnauthorizedException("JWT 인증 헤더가 필요합니다.");
         }
 
         String token = authHeader.substring(AUTHORIZATION_PREFIX.length());
-        Long userId = jwtUtil.getUserId(token);
+        jwtUtil.validateToken(token);
 
+        Long userId = jwtUtil.getUserId(token);
         return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("회원 정보가 존재하지 않습니다."));
     }
 }

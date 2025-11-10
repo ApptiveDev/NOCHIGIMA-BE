@@ -8,9 +8,12 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+
+import apptive.nochigima.exception.UnauthorizedException;
 
 @Slf4j
 @Component
@@ -42,6 +45,16 @@ public class JwtUtil {
                 .issuedAt(now)
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public void validateToken(String token) {
+        try {
+            Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
+        } catch (ExpiredJwtException e) {
+            throw new UnauthorizedException("JWT 토큰이 만료됨");
+        } catch (RuntimeException e) {
+            throw new UnauthorizedException("JWT 토큰이 유효하지 않음");
+        }
     }
 
     public Long getUserId(String token) {
