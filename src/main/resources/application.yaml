@@ -21,3 +21,5 @@ auth:
       redirect-uri: ${SERVER_ADDRESS}/v1/auth/google/callback
       token-uri: https://www.googleapis.com/oauth2/v4/token
       info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+  jwt:
+    secret: ${JWT_SECRET}
