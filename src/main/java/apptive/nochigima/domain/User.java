@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -32,6 +33,10 @@ public class User {
 
     @Column(name = "nickname")
     @Nullable private String nickname;
+
+    @Setter
+    @Column(name = "refresh_token")
+    @Nullable private String refreshToken;
 
     public User(String oauthId, AuthProvider authProvider) {
         this.oauthId = oauthId;

@@ -12,6 +12,7 @@ import apptive.nochigima.client.GoogleAuthClient;
 import apptive.nochigima.client.KakaoAuthClient;
 import apptive.nochigima.config.properties.GoogleAuthProperties;
 import apptive.nochigima.config.properties.KakaoAuthProperties;
+import apptive.nochigima.domain.AuthProvider;
 import apptive.nochigima.domain.User;
 import apptive.nochigima.dto.response.AuthResponse;
 import apptive.nochigima.dto.response.AuthUriResponse;
@@ -57,13 +58,7 @@ public class AuthService {
         KakaoAuthTokenResponse token = kakaoAuthClient.getKakaoOAuthToken(code);
         KakaoUserInfoResponse userInfo = kakaoAuthClient.getKakaoUserInfo(token);
 
-        User user = userRepository
-                .findByOauthIdAndAuthProvider(userInfo.oauthId(), KAKAO)
-                .orElseGet(() -> userRepository.save(new User(userInfo.oauthId(), KAKAO)));
-
-        String jwt = jwtUtil.createToken(user);
-
-        return new AuthResponse(jwt);
+        return getAuthResponse(userInfo.oauthId(), KAKAO);
     }
 
     @Transactional
@@ -71,12 +66,17 @@ public class AuthService {
         GoogleAuthTokenResponse token = googleAuthClient.getGoogleOAuthToken(code);
         GoogleUserInfoResponse userInfo = googleAuthClient.getGoogleUserInfo(token);
 
+        return getAuthResponse(userInfo.oauthId(), GOOGLE);
+    }
+
+    private AuthResponse getAuthResponse(String oauthId, AuthProvider authProvider) {
         User user = userRepository
-                .findByOauthIdAndAuthProvider(userInfo.oauthId(), GOOGLE)
-                .orElseGet(() -> userRepository.save(new User(userInfo.oauthId(), GOOGLE)));
+                .findByOauthIdAndAuthProvider(oauthId, authProvider)
+                .orElseGet(() -> userRepository.save(new User(oauthId, authProvider)));
 
-        String jwt = jwtUtil.createToken(user);
+        String refreshToken = jwtUtil.createRefreshToken(user.getId());
+        user.setRefreshToken(refreshToken);
 
-        return new AuthResponse(jwt);
+        return new AuthResponse(jwtUtil.createAccessToken(user.getId()), refreshToken);
     }
 }
