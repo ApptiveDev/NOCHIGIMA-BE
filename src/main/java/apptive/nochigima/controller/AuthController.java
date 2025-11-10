@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import apptive.nochigima.config.Auth;
@@ -17,6 +19,7 @@ import apptive.nochigima.dto.response.AuthResponse;
 import apptive.nochigima.dto.response.AuthUriResponse;
 import apptive.nochigima.service.AuthService;
 
+@Tag(name = "인증 API")
 @RestController
 @RequestMapping("v1/auth")
 @RequiredArgsConstructor
@@ -53,7 +56,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@Auth User user) {
+    public ResponseEntity<Void> logout(@Parameter(hidden = true) @Auth User user) {
         authService.logout(user);
         return ResponseEntity.ok().build();
     }

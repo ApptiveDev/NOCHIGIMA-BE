@@ -44,6 +44,7 @@ springdoc:
   swagger-ui:
     path: /
     enabled: true
+    operations-sorter: method
     disable-swagger-default-url: true
     display-request-duration: true
     persist-authorization: true
