@@ -3,6 +3,8 @@ package apptive.nochigima.service;
 import static apptive.nochigima.domain.AuthProvider.GOOGLE;
 import static apptive.nochigima.domain.AuthProvider.KAKAO;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import apptive.nochigima.dto.response.GoogleAuthTokenResponse;
 import apptive.nochigima.dto.response.GoogleUserInfoResponse;
 import apptive.nochigima.dto.response.KakaoAuthTokenResponse;
 import apptive.nochigima.dto.response.KakaoUserInfoResponse;
+import apptive.nochigima.exception.UnauthorizedException;
 import apptive.nochigima.repository.UserRepository;
 import apptive.nochigima.util.JwtUtil;
 
@@ -74,6 +77,29 @@ public class AuthService {
                 .findByOauthIdAndAuthProvider(oauthId, authProvider)
                 .orElseGet(() -> userRepository.save(new User(oauthId, authProvider)));
 
+        return issueTokens(user);
+    }
+
+    @Transactional
+    public AuthResponse reissueTokens(String refreshTokenWithPrefix) {
+        String refreshToken = jwtUtil.removePrefix(refreshTokenWithPrefix);
+        jwtUtil.validateToken(refreshToken);
+
+        Long userId = jwtUtil.getUserId(refreshToken);
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("토큰 정보와 일치하는 회원이 존재하지 않습니다."));
+
+        String dbRefreshToken = user.getRefreshToken();
+
+        if (dbRefreshToken == null || !dbRefreshToken.equals(refreshToken)) {
+            throw new UnauthorizedException("유효하지 않은 JWT 토큰입니다.");
+        }
+
+        return issueTokens(user);
+    }
+
+    private AuthResponse issueTokens(User user) {
         String refreshToken = jwtUtil.createRefreshToken(user.getId());
         user.setRefreshToken(refreshToken);
 
