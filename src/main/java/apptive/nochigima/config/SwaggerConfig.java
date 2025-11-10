@@ -22,6 +22,6 @@ public class SwaggerConfig {
     }
 
     private Server server() {
-        return new Server().url("/").description("놓치지마 API v1");
+        return new Server().url("/").description("API v1");
     }
 }
