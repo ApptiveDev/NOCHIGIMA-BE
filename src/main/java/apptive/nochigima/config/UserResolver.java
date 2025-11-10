@@ -46,6 +46,8 @@ public class UserResolver implements HandlerMethodArgumentResolver {
         jwtUtil.validateToken(token);
 
         Long userId = jwtUtil.getUserId(token);
-        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("회원 정보가 존재하지 않습니다."));
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("토큰 정보와 일치하는 회원이 존재하지 않습니다."));
     }
 }

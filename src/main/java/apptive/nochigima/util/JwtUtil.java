@@ -52,9 +52,9 @@ public class JwtUtil {
         try {
             Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
         } catch (ExpiredJwtException e) {
-            throw new UnauthorizedException("JWT 토큰이 만료됨");
+            throw new UnauthorizedException("JWT 토큰이 만료됐습니다.");
         } catch (RuntimeException e) {
-            throw new UnauthorizedException("JWT 토큰이 유효하지 않음");
+            throw new UnauthorizedException("유효하지 않은 JWT 토큰입니다.");
         }
     }
 
