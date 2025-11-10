@@ -111,4 +111,9 @@ public class AuthService {
             throw new UnauthorizedException("유효하지 않은 JWT 토큰입니다.");
         }
     }
+
+    @Transactional
+    public void logout(User user) {
+        user.setRefreshToken(null);
+    }
 }

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+import apptive.nochigima.config.Auth;
+import apptive.nochigima.domain.User;
 import apptive.nochigima.dto.request.ReissueRequest;
 import apptive.nochigima.dto.response.AuthResponse;
 import apptive.nochigima.dto.response.AuthUriResponse;
@@ -48,5 +50,11 @@ public class AuthController {
     public ResponseEntity<AuthResponse> reissueTokens(@RequestBody ReissueRequest reissueRequest) {
         AuthResponse authResponse = authService.reissueTokens(reissueRequest.refreshToken());
         return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Auth User user) {
+        authService.logout(user);
+        return ResponseEntity.ok().build();
     }
 }
