@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew spotlessCheck
 
       - name: JAR 빌드
-        run: ./gradlew build
+        run: ./gradlew build -x spotlessCheck
 
       - name: 빌드된 JAR 파일을 EC2로 전송
         uses: appleboy/scp-action@v1
@@ -43,4 +43,4 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_KEY }}
           username: ubuntu
-          script: /home/ubuntu/deploy.sh > /home/ubuntu/logs/deploy.log 2>&1
+          script: /home/ubuntu/deploy.sh > /home/ubuntu/logs/deploy.log
