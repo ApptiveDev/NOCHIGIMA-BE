@@ -1,0 +1,53 @@
+package apptive.nochigima.config;
+
+import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+import io.micrometer.common.util.StringUtils;
+import lombok.RequiredArgsConstructor;
+
+import apptive.nochigima.exception.UnauthorizedException;
+import apptive.nochigima.repository.UserRepository;
+import apptive.nochigima.util.JwtUtil;
+
+@Component
+@RequiredArgsConstructor
+public class UserResolver implements HandlerMethodArgumentResolver {
+
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
+
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.hasParameterAnnotation(Auth.class);
+    }
+
+    @Override
+    public Object resolveArgument(
+            @NonNull MethodParameter parameter,
+            ModelAndViewContainer mavContainer,
+            @NonNull NativeWebRequest webRequest,
+            WebDataBinderFactory binderFactory)
+            throws Exception {
+        String jwtWithPrefix = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.isBlank(jwtWithPrefix)) {
+            throw new UnauthorizedException("JWT 인증 헤더가 필요합니다.");
+        }
+
+        String token = jwtUtil.removePrefix(jwtWithPrefix);
+        jwtUtil.validateToken(token);
+
+        Long userId = jwtUtil.getUserId(token);
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("토큰 정보와 일치하는 회원이 존재하지 않습니다."));
+    }
+}
