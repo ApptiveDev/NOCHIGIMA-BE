@@ -1,6 +1,8 @@
 package apptive.nochigima.client;
 
 import org.springframework.http.MediaType;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -19,6 +21,7 @@ public class GoogleAuthClient {
     private final RestClient restClient;
     private final GoogleAuthProperties googleAuthPrpoerties;
 
+    @Retryable(retryFor = RuntimeException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
     public GoogleAuthTokenResponse getGoogleOAuthToken(String code) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
@@ -36,6 +39,7 @@ public class GoogleAuthClient {
                 .body(GoogleAuthTokenResponse.class);
     }
 
+    @Retryable(retryFor = RuntimeException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
     public GoogleUserInfoResponse getGoogleUserInfo(GoogleAuthTokenResponse token) {
         return restClient
                 .post()
