@@ -42,4 +42,9 @@ public class User {
         this.oauthId = oauthId;
         this.authProvider = authProvider;
     }
+
+    // 닉네임 변경 메서드
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

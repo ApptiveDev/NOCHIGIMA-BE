@@ -10,4 +10,6 @@ import apptive.nochigima.domain.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByOauthIdAndAuthProvider(String oauthId, AuthProvider authProvider);
+
+    boolean existsByNickname(String nickname);
 }

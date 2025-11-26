@@ -1,8 +1,6 @@
 package apptive.nochigima.client;
 
 import org.springframework.http.MediaType;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -21,7 +19,6 @@ public class KakaoAuthClient {
     private final RestClient restClient;
     private final KakaoAuthProperties kakaoAuthProperties;
 
-    @Retryable(retryFor = RuntimeException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
     public KakaoAuthTokenResponse getKakaoOAuthToken(String code) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
@@ -39,7 +36,6 @@ public class KakaoAuthClient {
                 .body(KakaoAuthTokenResponse.class);
     }
 
-    @Retryable(retryFor = RuntimeException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
     public KakaoUserInfoResponse getKakaoUserInfo(KakaoAuthTokenResponse token) {
         return restClient
                 .post()
