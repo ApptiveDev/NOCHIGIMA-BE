@@ -75,9 +75,18 @@ public class AuthService {
     private AuthResponse getAuthResponse(String oauthId, AuthProvider authProvider) {
         User user = userRepository
                 .findByOauthIdAndAuthProvider(oauthId, authProvider)
-                .orElseGet(() -> userRepository.save(new User(oauthId, authProvider)));
+                .orElse(null);
 
-        return issueTokens(user);
+        boolean isNewMember = false;
+
+        if (user == null) {
+            user = userRepository.save(new User(oauthId, authProvider));
+            isNewMember = true;
+        } else if (user.getNickname() == null) {
+            isNewMember = true;
+        }
+
+        return issueTokens(user, isNewMember);
     }
 
     @Transactional
@@ -88,14 +97,16 @@ public class AuthService {
         User user = findByIdOrThrow(jwtUtil.getUserId(refreshToken));
         validateRefreshTokenWithUser(refreshToken, user);
 
-        return issueTokens(user);
+        boolean isNewMember = (user.getNickname() == null);
+
+        return issueTokens(user, isNewMember);
     }
 
-    private AuthResponse issueTokens(User user) {
+    private AuthResponse issueTokens(User user, boolean isNewMember) {
         String refreshToken = jwtUtil.createRefreshToken(user.getId());
         user.setRefreshToken(refreshToken);
 
-        return new AuthResponse(jwtUtil.createAccessToken(user.getId()), refreshToken);
+        return new AuthResponse(jwtUtil.createAccessToken(user.getId()), refreshToken, isNewMember);
     }
 
     private User findByIdOrThrow(Long userId) {
