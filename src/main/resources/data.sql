@@ -7,7 +7,6 @@ VALUES (1, 1, '버거킹', 'https://nochigima.s3.ap-northeast-2.amazonaws.com/bu
 
 INSERT INTO promotion (brand_id, category_id, title, main_image_url, list_image_url, description, start_date, end_date)
 VALUES
-    -- 1. 맥도날드 (Brand ID: 2) - 종료일: 2025-12-01
     (2, 1, '크리스마스 트러플 치즈버거 + 탄산음료 M 18% 할인',
      NULL, NULL,
      '크리스마스 트러플 치즈버거 + 탄산음료 M 18% 할인',
