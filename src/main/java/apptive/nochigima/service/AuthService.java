@@ -65,6 +65,13 @@ public class AuthService {
     }
 
     @Transactional
+    public AuthResponse kakaoLoginWithAccessToken(String kakaoAccessToken) {
+        KakaoUserInfoResponse userInfo = kakaoAuthClient.getKakaoUserInfoByAccessToken(kakaoAccessToken);
+
+        return getAuthResponse(userInfo.oauthId(), KAKAO);
+    }
+
+    @Transactional
     public AuthResponse googleLogin(String code) {
         GoogleAuthTokenResponse token = googleAuthClient.getGoogleOAuthToken(code);
         GoogleUserInfoResponse userInfo = googleAuthClient.getGoogleUserInfo(token);
