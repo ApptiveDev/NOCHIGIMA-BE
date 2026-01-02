@@ -48,4 +48,14 @@ public class KakaoAuthClient {
                 .retrieve()
                 .body(KakaoUserInfoResponse.class);
     }
+
+    @Retryable(retryFor = RuntimeException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+    public KakaoUserInfoResponse getKakaoUserInfoByAccessToken(String accessToken) {
+        return restClient
+                .get()
+                .uri(kakaoAuthProperties.infoUri())
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(KakaoUserInfoResponse.class);
+    }
 }
