@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 import apptive.nochigima.config.Auth;
 import apptive.nochigima.domain.User;
+import apptive.nochigima.dto.request.KakaoLoginRequest;
 import apptive.nochigima.dto.request.ReissueRequest;
 import apptive.nochigima.dto.response.AuthResponse;
 import apptive.nochigima.dto.response.AuthUriResponse;
@@ -40,6 +41,12 @@ public class AuthController {
     @GetMapping("/kakao/callback")
     public ResponseEntity<AuthResponse> kakaoOAuthCallback(@RequestParam String code) {
         AuthResponse authResponse = authService.kakaoLogin(code);
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/kakao/callback")
+    public ResponseEntity<AuthResponse> kakaoOAuthCallback(@RequestBody KakaoLoginRequest request) {
+        AuthResponse authResponse = authService.kakaoLoginWithAccessToken(request.accessToken());
         return ResponseEntity.ok(authResponse);
     }
 
