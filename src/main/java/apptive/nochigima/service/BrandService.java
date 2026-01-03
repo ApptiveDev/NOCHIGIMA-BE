@@ -4,14 +4,14 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
-import apptive.nochigima.dto.response.BrandResponse;
-import apptive.nochigima.repository.BrandRepository;
-import apptive.nochigima.repository.CategoryRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import apptive.nochigima.dto.response.BrandResponse;
+import apptive.nochigima.repository.BrandRepository;
+import apptive.nochigima.repository.CategoryRepository;
 
 @Service
 @Transactional(readOnly = true)

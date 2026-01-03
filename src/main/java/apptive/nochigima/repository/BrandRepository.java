@@ -3,17 +3,16 @@ package apptive.nochigima.repository;
 import java.time.LocalDate;
 import java.util.List;
 
-import apptive.nochigima.domain.Brand;
-import apptive.nochigima.dto.response.BrandResponse;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import apptive.nochigima.domain.Brand;
+import apptive.nochigima.dto.response.BrandResponse;
+
 public interface BrandRepository extends JpaRepository<Brand, Long> {
 
-    @Query(
-            """
+    @Query("""
             select new apptive.nochigima.dto.response.BrandResponse(
                 b.id,
                 b.name,
@@ -29,6 +28,5 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
             group by b.id, b.name
             """)
     List<BrandResponse> findByCategoryWithDiscountedCount(
-            @Param("categoryId") Long categoryId,
-            @Param("now") LocalDate now);
+            @Param("categoryId") Long categoryId, @Param("now") LocalDate now);
 }

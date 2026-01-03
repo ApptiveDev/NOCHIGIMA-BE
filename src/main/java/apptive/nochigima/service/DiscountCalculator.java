@@ -3,9 +3,9 @@ package apptive.nochigima.service;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import apptive.nochigima.domain.Discount;
-
 import org.springframework.stereotype.Component;
+
+import apptive.nochigima.domain.Discount;
 
 @Component
 public class DiscountCalculator {

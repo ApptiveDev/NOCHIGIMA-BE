@@ -3,18 +3,17 @@ package apptive.nochigima.repository;
 import java.time.LocalDate;
 import java.util.List;
 
-import apptive.nochigima.domain.Product;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import apptive.nochigima.domain.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByBrandId(Long brandId);
 
-    @Query(
-            """
+    @Query("""
             select p
             from Product p
             where p.brand.id = :brandId

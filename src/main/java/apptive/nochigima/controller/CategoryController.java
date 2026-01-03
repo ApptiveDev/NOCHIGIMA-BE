@@ -2,15 +2,15 @@ package apptive.nochigima.controller;
 
 import java.util.List;
 
-import apptive.nochigima.dto.response.BrandResponse;
-import apptive.nochigima.dto.response.CategoryResponse;
-import apptive.nochigima.service.BrandService;
-import apptive.nochigima.service.CategoryService;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import apptive.nochigima.dto.response.BrandResponse;
+import apptive.nochigima.dto.response.CategoryResponse;
+import apptive.nochigima.service.BrandService;
+import apptive.nochigima.service.CategoryService;
 
 @RestController
 @RequestMapping("/v1/categories")

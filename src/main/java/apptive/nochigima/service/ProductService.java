@@ -6,6 +6,9 @@ import java.util.List;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import apptive.nochigima.domain.Brand;
 import apptive.nochigima.domain.Discount;
 import apptive.nochigima.domain.Product;
@@ -13,9 +16,6 @@ import apptive.nochigima.dto.request.ProductUpdateRequest;
 import apptive.nochigima.dto.response.ProductResponse;
 import apptive.nochigima.repository.BrandRepository;
 import apptive.nochigima.repository.ProductRepository;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -51,17 +51,15 @@ public class ProductService {
     }
 
     public ProductResponse getProduct(Long productId) {
-        Product product = productRepository
-                .findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+        Product product =
+                productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
         return toResponse(product);
     }
 
     @Transactional
     public ProductResponse updateProduct(Long productId, ProductUpdateRequest request) {
-        Product product = productRepository
-                .findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+        Product product =
+                productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
         Brand brand = getBrand(request.brandId());
         Discount discount = buildDiscount(request);
         product.update(request.name(), request.price(), request.imageUrl(), brand, discount);
@@ -69,21 +67,16 @@ public class ProductService {
     }
 
     private Brand getBrand(Long brandId) {
-        return brandRepository
-                .findById(brandId)
-                .orElseThrow(() -> new EntityNotFoundException("브랜드를 찾을 수 없습니다."));
+        return brandRepository.findById(brandId).orElseThrow(() -> new EntityNotFoundException("브랜드를 찾을 수 없습니다."));
     }
 
     private Discount buildDiscount(ProductUpdateRequest request) {
-        boolean hasAnyDiscountField = request.discountValue() != null
-                || request.discountStartAt() != null
-                || request.discountEndAt() != null;
+        boolean hasAnyDiscountField =
+                request.discountValue() != null || request.discountStartAt() != null || request.discountEndAt() != null;
         if (!hasAnyDiscountField) {
             return null;
         }
-        if (request.discountValue() == null
-                || request.discountStartAt() == null
-                || request.discountEndAt() == null) {
+        if (request.discountValue() == null || request.discountStartAt() == null || request.discountEndAt() == null) {
             throw new IllegalArgumentException("할인 정보는 value/start/end 모두 필요합니다.");
         }
         if (request.discountStartAt().isAfter(request.discountEndAt())) {

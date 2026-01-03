@@ -1,7 +1,7 @@
 package apptive.nochigima.repository;
 
-import apptive.nochigima.domain.Category;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import apptive.nochigima.domain.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {}

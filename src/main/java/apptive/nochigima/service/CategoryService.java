@@ -2,11 +2,11 @@ package apptive.nochigima.service;
 
 import java.util.List;
 
-import apptive.nochigima.dto.response.CategoryResponse;
-import apptive.nochigima.repository.CategoryRepository;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import apptive.nochigima.dto.response.CategoryResponse;
+import apptive.nochigima.repository.CategoryRepository;
 
 @Service
 @Transactional(readOnly = true)

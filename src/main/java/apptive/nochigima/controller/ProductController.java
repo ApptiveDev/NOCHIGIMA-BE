@@ -1,9 +1,5 @@
 package apptive.nochigima.controller;
 
-import apptive.nochigima.dto.request.ProductUpdateRequest;
-import apptive.nochigima.dto.response.ProductResponse;
-import apptive.nochigima.service.ProductService;
-
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +8,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import apptive.nochigima.dto.request.ProductUpdateRequest;
+import apptive.nochigima.dto.response.ProductResponse;
+import apptive.nochigima.service.ProductService;
 
 @RestController
 @RequestMapping("/v1/products")
