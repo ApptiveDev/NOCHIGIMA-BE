@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import apptive.nochigima.dto.request.ProductUpdateRequest;
+import apptive.nochigima.dto.request.UpdateProductRequest;
 import apptive.nochigima.dto.response.ProductResponse;
 import apptive.nochigima.service.ProductService;
 
@@ -33,7 +33,7 @@ public class ProductController {
 
     @PutMapping("/{productId}")
     public ProductResponse updateProduct(
-            @PathVariable Long productId, @Valid @RequestBody ProductUpdateRequest request) {
+            @PathVariable Long productId, @Valid @RequestBody UpdateProductRequest request) {
         return productService.updateProduct(productId, request);
     }
 }

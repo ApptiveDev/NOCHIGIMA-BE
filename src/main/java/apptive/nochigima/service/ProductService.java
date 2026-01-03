@@ -9,10 +9,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import apptive.nochigima.domain.Brand;
 import apptive.nochigima.domain.Discount;
 import apptive.nochigima.domain.Product;
-import apptive.nochigima.dto.request.ProductUpdateRequest;
+import apptive.nochigima.dto.request.UpdateProductRequest;
 import apptive.nochigima.dto.response.ProductResponse;
 import apptive.nochigima.repository.BrandRepository;
 import apptive.nochigima.repository.ProductRepository;
@@ -38,14 +37,16 @@ public class ProductService {
     }
 
     public List<ProductResponse> getProductsByBrand(Long brandId, boolean onlyDiscounted) {
-        Brand brand = getBrand(brandId);
+        if (!brandRepository.existsById(brandId)) {
+            throw new EntityNotFoundException("브랜드를 찾을 수 없습니다.");
+        }
         List<Product> products;
         if (onlyDiscounted) {
             // Centralized Clock keeps date-based filtering deterministic and test-friendly.
             LocalDate today = LocalDate.now(clock);
-            products = productRepository.findDiscountedByBrandId(brand.getId(), today);
+            products = productRepository.findDiscountedByBrandId(brandId, today);
         } else {
-            products = productRepository.findByBrandId(brand.getId());
+            products = productRepository.findByBrandId(brandId);
         }
         return products.stream().map(this::toResponse).toList();
     }
@@ -57,20 +58,18 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse updateProduct(Long productId, ProductUpdateRequest request) {
+    public ProductResponse updateProduct(Long productId, UpdateProductRequest request) {
         Product product =
                 productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
-        Brand brand = getBrand(request.brandId());
+        if (!productId.equals(request.productId())) {
+            throw new IllegalArgumentException("요청 경로의 상품 ID와 요청 본문의 상품 ID가 일치해야 합니다.");
+        }
         Discount discount = buildDiscount(request);
-        product.update(request.name(), request.price(), request.imageUrl(), brand, discount);
+        product.updateDiscount(discount);
         return toResponse(product);
     }
 
-    private Brand getBrand(Long brandId) {
-        return brandRepository.findById(brandId).orElseThrow(() -> new EntityNotFoundException("브랜드를 찾을 수 없습니다."));
-    }
-
-    private Discount buildDiscount(ProductUpdateRequest request) {
+    private Discount buildDiscount(UpdateProductRequest request) {
         boolean hasAnyDiscountField =
                 request.discountValue() != null || request.discountStartAt() != null || request.discountEndAt() != null;
         if (!hasAnyDiscountField) {

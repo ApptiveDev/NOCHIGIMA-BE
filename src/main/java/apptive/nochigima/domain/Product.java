@@ -50,11 +50,7 @@ public class Product {
         this.discount = discount;
     }
 
-    public void update(String name, Long price, String imageUrl, Brand brand, Discount discount) {
-        this.name = name;
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.brand = brand;
+    public void updateDiscount(Discount discount) {
         this.discount = discount;
     }
 }
