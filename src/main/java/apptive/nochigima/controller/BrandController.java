@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import apptive.nochigima.dto.response.ProductResponse;
 import apptive.nochigima.service.ProductService;
 
+@Tag(name = "브랜드 API")
 @RestController
 @RequestMapping("/v1/brands")
 public class BrandController {

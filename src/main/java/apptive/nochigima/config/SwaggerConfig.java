@@ -35,7 +35,11 @@ public class SwaggerConfig {
     }
 
     private List<Tag> tags() {
-        return List.of(new Tag().name("인증 API").description("카카오, 구글 OAuth를 통해 회원가입 및 로그인, 로그인 정보 갱신, 로그아웃"));
+        return List.of(
+                new Tag().name("인증 API").description("카카오, 구글 OAuth를 통해 회원가입 및 로그인, 로그인 정보 갱신, 로그아웃"),
+                new Tag().name("브랜드 API").description("브랜드 id로 상품 목록 조회 (할인중인 상품만 필터링 가능)"),
+                new Tag().name("카테고리 API").description("카테고리 id로 브랜드 목록과 현재 할인중인 상품 개수 조회"),
+                new Tag().name("상품 API").description("상품 id로 상품 상세정보 조회"));
     }
 
     private Components components() {
