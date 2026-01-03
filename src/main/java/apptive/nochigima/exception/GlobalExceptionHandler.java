@@ -1,9 +1,11 @@
 package apptive.nochigima.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.RestClientException;
@@ -24,6 +26,23 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleIllegalStateException(IllegalStateException e) {
         log.error("[IllegalStateException] {}", e.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("[MethodArgumentNotValidException] {}", e.getMessage());
+        String message =
+            e.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .orElse("요청 값이 유효하지 않습니다.");
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail handleConstraintViolationException(ConstraintViolationException e) {
+        log.error("[ConstraintViolationException] {}", e.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
